@@ -1,4 +1,5 @@
-﻿using Employee.Entities.Enums;
+﻿using System.Security.Cryptography.X509Certificates;
+using Employee.Entities.Enums;
 
 namespace Employee.Entities;
 
@@ -6,21 +7,49 @@ class Worker
 {
     public string Name { get; set; }
     public WorkerLevel Level { get; set; }
+
     public Double BaseSalary { get; set; }
+
+    // Composição: Associação entre duas classes diferentes
+    public Department Department { get; set; }
+
+    // Recebe uma lista de contratos
+    public List<HourContract> Contracts { get; set; } = new List<HourContract>();
+
+    public Worker()
+    {
+    }
+
+    public Worker(string name, WorkerLevel level, double baseSalary, Department department)
+    {
+        Name = name;
+        Level = level;
+        BaseSalary = baseSalary;
+        Department = department;
+    }
 
     public void AddContract(HourContract contract)
     {
-        // Implementar
+        Contracts.Add(contract);
     }
 
     public void RemoveContract(HourContract contract)
     {
-        // Implementar
+        Contracts.Remove(contract);
     }
 
     public double Income(int year, int month)
     {
-        // Implementar
-        return 0.0;
+        double sum = BaseSalary;
+
+        foreach (HourContract contract in Contracts)
+        {
+            if (contract.Date.Year == year && contract.Date.Month == month)
+            {
+                sum += contract.TotalValue();
+            }
+        }
+
+        return sum;
     }
 }
